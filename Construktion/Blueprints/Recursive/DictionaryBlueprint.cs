@@ -16,10 +16,14 @@
 
         public object Construct(ConstruktionContext context, ConstruktionPipeline pipeline)
         {
-            var count = 4;
-
             var key = context.RequestType.GetGenericArguments()[0];
             var value = context.RequestType.GetGenericArguments()[1];
+
+            var count = key == typeof(bool) || key == typeof(bool?)
+                ? 2 
+                : key.GetTypeInfo().IsEnum
+                ? Enum.GetValues(key).Length 
+                : 4;
 
             var keys = UniqueKeys(count, key, pipeline, new HashSet<object>()).ToList();
             var values = Values(count, value, pipeline).ToList();
